@@ -94,6 +94,17 @@ class GameSpy1(ProtocolBase):
 
                 # Save the packet count
                 packet_count = int(number)
+                
+            # for BF1942
+            elif packet.rsplit(b'\\', 4)[1] == b'final':
+                # Split to payload, "queryid", query_id
+                payload, _, query_id = packet.rsplit(b'\\', 2)
+
+                # Get the packet number from query_id
+                number = re.search(rb'\d+.(\d+)', query_id).group(1)
+
+                # Save the packet count
+                packet_count = int(number) 
             else:
                 # Split to payload, "queryid", query_id
                 payload, _, query_id = packet.rsplit(b'\\', 2)
@@ -168,8 +179,8 @@ if __name__ == '__main__':
 
     async def main_async():
         gs1 = GameSpy1(
-            address='139.162.235.20',
-            query_port=7778,
+            address='176.9.19.239',
+            query_port=23000,
             timeout=5.0
         )
         status = await gs1.get_status()
